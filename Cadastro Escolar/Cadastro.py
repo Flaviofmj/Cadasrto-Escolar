@@ -10,6 +10,7 @@ from time import sleep
 alunos = []
 professores = []
 proximo_numero = 1
+proximo_professor = 1
 
 # ==========================
 # DISCIPLINAS DO CURSO
@@ -55,6 +56,10 @@ def validar_texto(mensagem="\nDigite o nome completo do aluno: "):
 
     return nome
 
+# Solicita o nome completo do aluno e verifica se o valor informado
+# contém apenas letras e espaços. Caso o usuário digite números ou
+# caracteres especiais, uma mensagem de erro é exibida e a entrada
+# é solicitada novamente até que seja válida.
 
 def validar_idade(mensagem="Digite a idade: "):
 
@@ -69,6 +74,10 @@ def validar_idade(mensagem="Digite a idade: "):
 
         except ValueError:
             print(f"{vermelho}Digite apenas números!{reset}")
+
+# Solicita a idade do aluno, garantindo que o valor seja numérico.
+# Também verifica se a idade está dentro da faixa permitida (5 a 125 anos).
+# Enquanto a entrada for inválida, o usuário deverá informar novamente.
 
 def validar_nota():
 
@@ -94,6 +103,9 @@ def validar_nota():
 
     return notas, media
 
+# Coleta três notas do aluno, validando se cada uma está entre 0 e 10.
+# Se o usuário informar um valor inválido ou não numérico, uma mensagem
+# de erro é exibida. Ao final, calcula e retorna a média das três notas.
 
 def validar_matricula(mensagem="Digite a matrícula do aluno(a): "):
 
@@ -105,7 +117,11 @@ def validar_matricula(mensagem="Digite a matrícula do aluno(a): "):
             return matricula
 
         else:
-            print(f"{vermelho}Matrícula inválida! Digite os 5 números.{reset}")
+            print(f"{vermelho}Digite uma matrícula válida com 5 dígitos.{reset}")
+
+# Solicita a matrícula do aluno e verifica se ela possui exatamente
+# 5 dígitos numéricos. Caso contrário, solicita uma nova entrada até
+# que o formato correto seja informado.
 
 
 def calcular_situacao(nota):
@@ -120,9 +136,21 @@ def calcular_situacao(nota):
         return f"{vermelho}REPROVADO{reset}"
 
 
+#Analisa a média final do aluno e define sua situação acadêmica:
+#Média maior ou igual a 7: APROVADO      
+#Média entre 5 e 6.99: RECUPERAÇÃO                                
+#Média inferior a 5: REPROVADO                                    
+#Retorna a situação utilizando cores para facilitar a visualização. 
+
 # ==========================
 # EMITIR CERTIFICADO
 # ==========================
+
+
+# Verifica se o aluno foi aprovado em todas as disciplinas.           
+# Se todas as médias forem maiores ou iguais a 7, exibe um certificado 
+# com o nome do aluno, disciplinas cursadas e resultado final.         
+# Caso contrário, informa que o certificado não pode ser emitido.      
 
 def emitir_certificado(aluno):
 
@@ -135,11 +163,11 @@ def emitir_certificado(aluno):
 
     if aprovado:
         print()
-        print(f"{laranja}" + "=" * 45)
-        print("          CERTIFICADO DE APROVAÇÃO")
-        print("=" * 45 + f"{reset}")
+        print(f"{laranja}" + "=" * 60)
+        print("             CERTIFICADO DE APROVAÇÃO")
+        print("=" * 60 + f"{reset}")
 
-        print(f"\nCertificamos, para os devidos fins, que \033[1;32m{aluno['nome']}\033[0m concluiu com sucesso as seguintes disciplinas:")
+        print(f"\nCertificamos, para os devidos fins, que {verde}{aluno['nome']}{reset} \nconcluiu com sucesso as seguintes disciplinas:")
 
         for disciplina in aluno["disciplinas"]:
 
@@ -147,14 +175,13 @@ def emitir_certificado(aluno):
 
         print(f"\nRESULTADO FINAL: {verde}APROVADO{reset}")
 
-        print(f"\n{laranja}" + "=" * 45)
-        print("       PARABÉNS PELA CONQUISTA!")
-        print("=" * 45 + f"{reset}")
+        print(f"\n{laranja}" + "=" * 60)
+        print("             PARABÉNS PELA CONQUISTA!")
+        print("=" * 60 + f"{reset}")
 
     else:
 
         print(f"{vermelho}Aluno não possui aprovação em todas as disciplinas.{reset}")
-
 
 # ==========================
 # INFORMAÇÕES ANTES DO CADASTRO
@@ -179,15 +206,22 @@ while True:
     print("8 - Editar Professor")
     print("9 - Remover Professor")
     print("10 - Emitir Certificado")
-    print("11 - Sair")
+    print("11 - Relatório completo")
+    print("12 - Sair")
 
     opcao = input("\nEscolha uma opção: ")
     print()
     imprimir("-" * 40)
 
-    # ==========================
-    # CADASTRAR ALUNO
-    # ==========================
+
+# ==========================
+# CADASTRAR ALUNO
+# ==========================
+
+
+# Cadastra um novo aluno, coleta seus dados e notas,    
+# calcula as médias das disciplinas, gera uma matrícula 
+# automática e salva as informações no sistema.         
 
     if opcao == "1":
 
@@ -198,14 +232,33 @@ while True:
 
         nome = validar_texto()
         idade = validar_idade()
-        curso = validar_texto("Digite o nome do curso: ")
         
+        while True:
+            print("\n===== SELECIONE O CURSO =====")
+            print("\n1 - Ciências da Computação")
+            print("2 - Análise e Desenvolvimento de Sistemas")
+
+            opcao_curso = input("\nEscolha o curso: ")
+            print()
+
+            match opcao_curso:
+                case "1":
+                    curso = "Ciências da Computação"
+                    break
+
+                case "2":
+                    curso = "Análise e Desenvolvimento de Sistemas"
+                    break
+
+                case _:
+                    print(f"{vermelho}Opção inválida! Escolha 1 ou 2.{reset}")
+
         numero = f"{proximo_numero:05d}"
 
         print()
         print(f"{laranja}ATENÇÃO!{reset}")
         print("Cada disciplina possui 3 avaliações.")
-        print("As notas devem ser informadas de 0 a 10.")
+        imprimir("As notas devem ser informadas de 0 a 10.")
         
 
         disciplinas = []
@@ -241,9 +294,16 @@ while True:
         imprimir(f"\n{verde}Aluno cadastrado com sucesso!{reset}")
         imprimir(f"{verde}Número de matrícula: {numero}{reset}")
 
-    # ==========================
-    # LISTAR ALUNOS
-    # ==========================
+# ==========================
+# LISTAR ALUNOS
+# ==========================
+
+
+# Exibe a lista de alunos cadastrados no sistema.     
+# Mostra matrícula, nome, idade, curso, notas, médias 
+# e a situação de cada disciplina. Caso não existam   
+# alunos cadastrados, informa ao usuário.             
+
 
     elif opcao == "2":
 
@@ -253,23 +313,23 @@ while True:
 
         else:
 
-            imprimir("\n=== ALUNOS CADASTRADOS ===")
+            imprimir("\n ---=== ALUNOS CADASTRADOS ===---")
+            print()
+            imprimir("-" * 40)
 
             for aluno in alunos:
 
-                print()
-                print("=" * 40)
-                print(f"Matrícula: {negrito}{aluno['Numero de Matricula']}{reset}")
+                print(f"\nMatrícula: {negrito}{aluno['Numero de Matricula']}{reset}")
                 print(f"Nome: {negrito}{aluno['nome']}{reset}")
                 print(f"Idade: {negrito}{aluno['idade']}{reset}")
-                print(f"Curso: {aluno['curso']}")
+                print(f"Curso: {negrito}{aluno['curso']}{reset}")
 
                 for disciplina in aluno["disciplinas"]:
 
                     notas_formatadas = " | ".join(f"{n:.1f}" for n in disciplina["notas"])
                     print()
                     print(f"  Disciplina: {sublinhado}{disciplina['nome']}{reset}")
-                    print(f"  Notas: {negrito}{notas_formatadas}{reset}")
+                    print(f"  Notas: {negrito}{sublinhado}{notas_formatadas}{reset}")
                     print(f"  Média: {negrito}{disciplina['media']:.2f}{reset}")
                     print(f"  Situação: {disciplina['situacao']}")
 
@@ -277,12 +337,18 @@ while True:
 
         imprimir("-" * 40)
 
-    # ==========================
-    # PESQUISAR ALUNO
-    # ==========================
+# ==========================
+# PESQUISAR ALUNO
+# ==========================
+
+# Permite consultar um aluno pelo número de matrícula.             
+# Caso encontrado, exibe seus dados pessoais, disciplinas,         
+# notas, médias e situação em cada matéria. Se a matrícula         
+# não existir no sistema, informa que o aluno não foi encontrado.  
 
     elif opcao == "3":
 
+        print()
         matricula_busca = validar_matricula()
 
         encontrado = False
@@ -291,11 +357,11 @@ while True:
 
             if matricula_busca == aluno["Numero de Matricula"]:
 
-                print(f"\n{verde}=== ALUNO ENCONTRADO ==={reset}")
-                print(f"Matrícula: {aluno['Numero de Matricula']}")
-                print(f"Nome: {aluno['nome']}")
-                print(f"Idade: {aluno['idade']}")
-                print(f"Curso: {aluno['curso']}")
+                print(f"\n{verde}  ---=== ALUNO ENCONTRADO ===---{reset}")
+                print(f"\nMatrícula: {aluno['Numero de Matricula']}")
+                print(f"Nome: {negrito}{aluno['nome']}{reset}")
+                print(f"Idade: {negrito}{aluno['idade']}{reset}")
+                print(f"Curso: {negrito}{aluno['curso']}{reset}")
 
                 for disciplina in aluno["disciplinas"]:
 
@@ -313,12 +379,20 @@ while True:
             print(f"{vermelho}Aluno não encontrado!{reset}")
         imprimir("-" * 40)
 
-    # ==========================
-    # EDITAR ALUNO
-    # ==========================
+# ==========================
+# EDITAR ALUNO
+# ==========================
+
+#Permite localizar um aluno pela matrícula e editar seus dados.       
+#O usuário pode alterar nome, idade, curso, notas das disciplinas     
+#ou todas as informações de uma vez. Após a edição das notas,         
+#a média e a situação da disciplina são recalculadas automaticamente. 
+#Caso a matrícula não seja encontrada, uma mensagem de erro é exibida.
+
 
     elif opcao == "4":
 
+        print()
         matricula_busca = validar_matricula()
 
         encontrado = False
@@ -333,8 +407,8 @@ while True:
 
                 while True:
 
-                    print("\n===== EDITAR ALUNO =====")
-                    print("1 - Alterar nome")
+                    print("\n----===== EDITAR ALUNO =====----")
+                    print("\n1 - Alterar nome")
                     print("2 - Alterar idade")
                     print("3 - Alterar curso")
                     print("4 - Alterar as notas das disciplinas")
@@ -342,27 +416,50 @@ while True:
                     print("6 - Voltar ao menu principal")
 
                     edicao = input("\nEscolher uma opção: ")
+                    imprimir("-" * 40)
 
                     if edicao == "1":
 
-                        aluno["nome"] = validar_texto("Novo nome: ")
+                        aluno["nome"] = validar_texto("\nNovo nome: ")
                         print(f"{verde}Nome atualizado com sucesso!{reset}")
+                        imprimir("-" * 40)
 
                     elif edicao == "2":
 
-                        aluno["idade"] = validar_idade("Nova idade: ")
+                        aluno["idade"] = validar_idade("\nNova idade: ")
                         print(f"{verde}Idade atualizada com sucesso!{reset}")
+                        imprimir("-" * 40)
 
                     elif edicao == "3":
+                        while True:
+                            print("\n---=== SELECIONE O NOVO CURSO ===---")
+                            print("1 - Ciências da Computação")
+                            print("2 - Análise e Desenvolvimento de Sistemas")
 
-                        aluno["curso"] = validar_texto("Novo curso: ")
-                        print(f"{verde}Curso atualizado com sucesso!{reset}")
+                            opcao_curso = input("\nEscolha o novo curso: ")
+                            imprimir("-" * 40)
+
+                            match opcao_curso:
+                                case "1":
+                                    aluno["curso"] = "Ciências da Computação"
+                                    print(f"{verde}Curso atualizado com sucesso!{reset}")
+                                    imprimir("-" * 40)
+                                    break
+
+                                case "2":
+                                    aluno["curso"] = "Análise e Desenvolvimento de Sistemas"
+                                    print(f"{verde}Curso atualizado com sucesso!{reset}")
+                                    imprimir("-" * 40)
+                                    break
+                                case _:
+                                    print(f"{vermelho}Opção inválida! Escolha 1 ou 2.{reset}")
 
                     elif edicao == "4":
 
-                        print("\n===== ALTERAR NOTAS =====")
+                        print("\n---=== ALTERAR NOTAS ===--- ")
 
                         for c in range(len(aluno["disciplinas"])):
+                            print()
                             print(f"{c+1} - {aluno['disciplinas'][c]['nome']}")
 
                         print(f"{len(aluno['disciplinas'])+1} - Voltar")
@@ -377,8 +474,9 @@ while True:
 
                                 disciplina = aluno["disciplinas"][escolha - 1]
 
-                                print(f"\nDisciplina: {disciplina['nome']}")
-                                print("informe as nova notas:")
+                                print(f"\nDisciplina: {negrito}{disciplina['nome']}{reset}")
+                                imprimir("informe as novas notas:")
+                                print()
 
                                 notas, media = validar_nota()
 
@@ -403,9 +501,31 @@ while True:
 
                         aluno["nome"] = validar_texto("Novo nome: ")
                         aluno["idade"]= validar_idade("Nova idade: ")
-                        aluno["curso"]= validar_texto("Novo curso: ")
+                        while True:
+                            print("\n---=== SELECIONE O NOVO CURSO ===---")
+                            print("1 - Ciências da Computação")
+                            print("2 - Análise e Desenvolvimento de Sistemas")
 
-                        for diciplina in aluno["disciplinas"]:
+                            opcao_curso = input("\nEscolha o novo curso: ")
+                            imprimir("-" * 40)
+
+                            match opcao_curso:
+                                case "1":
+                                    aluno["curso"] = "\nCiências da Computação"
+                                    print(f"{verde}Curso atualizado com sucesso!{reset}")
+                                    imprimir("-" * 40)
+                                    break
+
+                                case "2":
+                                    aluno["curso"] = "Análise e Desenvolvimento de Sistemas"
+                                    print(f"{verde}Curso atualizado com sucesso!{reset}")
+                                    imprimir("-" * 40)
+                                    break
+                                case _:
+                                    print(f"{vermelho}Opção inválida! Escolha 1 ou 2.{reset}")
+
+
+                        for disciplina in aluno["disciplinas"]:
 
                             print(f"\nDisciplina: {disciplina['nome']}")
 
@@ -419,22 +539,27 @@ while True:
 
                     elif edicao =="6":
 
-                        imprimir("\nVoltar ao menu principal...")
+                        imprimir("\nVoltando ao menu principal...")
                         break
 
                     else:
                         print(f"{vermelho}Opção inválida!{reset}")
 
                 break
-            if not encontrado:
+        if not encontrado:
 
-                print(f"\n{vermelho}Aluno não encontrado!{reset}")
+            print(f"\n{vermelho}Aluno não encontrado!{reset}")
 
-                imprimir("-"*40)
+            imprimir("-"*40)
                 
-    # ==========================
-    # REMOVER ALUNO
-    # ==========================
+# ==========================
+# REMOVER ALUNO
+# ==========================
+
+# Permite excluir um aluno cadastrado a partir da matrícula.    
+# Solicita confirmação antes da remoção e, caso confirmada,     
+# remove o aluno da lista. Se a operação for cancelada ou a     
+# matrícula não for encontrada, exibe uma mensagem informativa. 
 
     elif opcao == "5":
 
@@ -479,25 +604,54 @@ while True:
     # CADASTRAR PROFESSOR
     # ==========================
 
+    
+    
     elif opcao == "6":
 
-        professor = validar_texto("Digite o nome completo do professor: ")
-        
+        print(f"{negrito}\n Bem-vindo ao módulo de cadastro de professores!{reset}\nPreencha os dados solicitados para realizar o cadastro.\nAo finalizar, será gerado automaticamente um número de matrícula.")
+
+        professor = validar_texto("\nDigite o nome completo do professor: ")
+
         idade = validar_idade("Digite a idade: ")
 
-        disciplina = validar_texto("Digite a disciplina: ")
+        while True:
+            print("\n------ SELECIONE O CURSO ------")
+            print("\n1 - Ciências da Computação")
+            print("2 - Análise e Desenvolvimento de Sistemas")
+
+            opcao_curso = input("\nEscolha o curso: ")
+
+            match opcao_curso:
+                case "1":
+                    curso = "Ciências da Computação"
+                    break
+
+                case "2":
+                    curso = "Análise e Desenvolvimento de Sistemas"
+                    break
+
+                case _:
+                    print(f"{vermelho}Opção inválida! Escolha 1 ou 2.{reset}")
+
+        numero_professor = f"{proximo_professor:05d}"
 
         professor = {
+            "Numero de Matricula": numero_professor,
             "nome": professor,
             "idade": idade,
-            "disciplina": disciplina
+            "curso": curso
         }
 
         professores.append(professor)
 
+        proximo_professor += 1
+
         print(f"{verde}\nProfessor cadastrado com sucesso!{reset}")
-        print()
+        print(f"{verde}Matrícula: {numero_professor}{reset}")
+
         imprimir("-" * 40)
+
+
 
     # ==========================
     # LISTAR PROFESSORES
@@ -513,9 +667,10 @@ while True:
 
             for professor in professores:
 
+                print(f"\nMatrícula: {negrito}{professor['Numero de Matricula']}{reset}")
                 print(f"Nome: {verde}{professor['nome']}{reset}")
                 print(f"Idade: {verde}{professor['idade']} anos{reset}")
-                print(f"Disciplina: {verde}{professor['disciplina']}{reset}")
+                print(f"Curso: {verde}{professor['curso']}{reset}")
                 print("-" * 30)
 
                 
@@ -524,32 +679,51 @@ while True:
     # EDITAR PROFESSOR
     # ==========================
 
+    
+    
     elif opcao == "8":
 
-        matricula_busca = validar_texto("Digite o nome completo do professor para editar: ").lower()
+        matricula_busca = validar_matricula("Digite a matrícula do professor: ")
 
         encontrado = False
 
         for professor in professores:
 
-            if professor["nome"].lower() == matricula_busca:
-
-                professor["nome"] = validar_texto(f"Novo nome ({professor['nome']}): ")
-                
-                professor["idade"] = validar_idade(f"Nova idade ({professor['idade']}): ")
-
-                professor["disciplina"] = validar_texto(f"Nova disciplina ({professor['disciplina']}): ")
-
-                print(f"{verde}\nProfessor atualizado com sucesso!{reset}")
-                print()
-                imprimir("-" * 40)
+            if matricula_busca == professor["Numero de Matricula"]:
 
                 encontrado = True
+
+                print(f"\nProfessor encontrado: {professor['nome']}")
+
+                professor["nome"] = validar_texto("Novo nome: ")
+                professor["idade"] = validar_idade("Nova idade: ")
+
+                while True:
+
+                    print("\n===== SELECIONE O NOVO CURSO =====")
+                    print("\n1 - Ciências da Computação")
+                    print("2 - Análise e Desenvolvimento de Sistemas")
+
+                    opcao_curso = input("\nEscolha o novo curso: ")
+
+                    match opcao_curso:
+
+                        case "1":
+                            professor["curso"] = "Ciências da Computação"
+                            break
+
+                        case "2":
+                            professor["curso"] = "Análise e Desenvolvimento de Sistemas"
+                            break
+
+                        case _:
+                            print(f"{vermelho}Opção inválida!{reset}")
+
+                print(f"{verde}\nProfessor atualizado com sucesso!{reset}")
                 break
 
         if not encontrado:
-            print(f"{vermelho}Professor não encontrado.{reset}")
-            print()
+            print(f"{vermelho}Professor não encontrado!{reset}")
             imprimir("-" * 40)
 
     # ==========================
@@ -559,37 +733,48 @@ while True:
     elif opcao == "9":
 
         if len(professores) == 0:
-            print("Nenhum professor cadastrado.")
+
+            print(f"{vermelho}Nenhum professor cadastrado.{reset}")
 
         else:
-            matricula_busca = input("Digite o nome completo do professor para remover: ").lower()
+
+            matricula_busca = validar_matricula("Digite a matrícula do professor para remover: ")
 
             removido = False
 
             for professor in professores:
 
-                if professor["nome"].lower() == matricula_busca:
+                if matricula_busca == professor["Numero de Matricula"]:
 
-                    confirmar = input(f"Confirma remover {professor['nome']}? (S/N): ").upper()
+                    confirmar = input(
+                        f"Confirma remover {professor['nome']}? (S/N): "
+                    ).upper()
 
                     if confirmar == "S":
+
                         professores.remove(professor)
-                        print(f"{verde}\nProfessor removido com sucesso!{reset}")
+
+                        print(f"{verde}Professor removido com sucesso!{reset}")
 
                     else:
-                        print("Operação cancelada.")
+
+                        print(f"{laranja}Operação cancelada.{reset}")
 
                     removido = True
                     break
 
             if not removido:
-                print("\nProfessor não encontrado.")
-                print()
-                imprimir("-" * 40)
+                print(f"{vermelho}Professor não encontrado!{reset}")
 
-    # ==========================
-    # EMITIR CERTIFICADO
-    # ==========================
+            imprimir("-" * 40)
+# ==========================
+# EMITIR CERTIFICADO
+# ==========================
+
+# Permite emitir o certificado de aprovação de um aluno.                        
+# Busca o aluno pela matrícula e verifica se ele existe no sistema.             
+# Se encontrado, gera o certificado com base em seu desempenho.                 
+# Caso a matrícula não seja localizada, informa que o aluno não foi encontrado. 
 
     elif opcao == "10":
 
@@ -613,12 +798,49 @@ while True:
 
             if not encontrado:
                 print(f"{vermelho}Aluno não encontrado.{reset}")
+                
+
+    elif opcao=="11":
+        print()
+        imprimir(f"{azul}-=-=-=-=-=- RELATÓRIO FINAL -=-=-=-=-=-{reset}")
+        print()
+        imprimir(f"{laranja}\n  ALUNOS CADASTRADOS {reset}")
+
+        for aluno in alunos:
+
+            print(f"\n  Matrícula: {negrito}{aluno['Numero de Matricula']}{reset}")
+            print(f"  Nome: {negrito}{aluno['nome']}{reset}")
+            print(f"  Idade: {negrito}{aluno['idade']}{reset}")
+            print(f"  Curso: {negrito}{aluno['curso']}{reset}")
+
+            for disciplina in aluno["disciplinas"]:
+
+                notas_formatadas = " | ".join(f"{n:.1f}" for n in disciplina["notas"])
+                print()
+                print(f"  Disciplina: {sublinhado}{disciplina['nome']}{reset}")
+                print(f"  Notas: {negrito}{sublinhado}{notas_formatadas}{reset}")
+                print(f"  Média: {negrito}{disciplina['media']:.2f}{reset}")
+                print(f"  Situação: {disciplina['situacao']}")
+
+            print()
+            imprimir("-" * 40)
+
+        print(f"{laranja}\n  PROFESSORES CADASTRADOS {reset}")
+
+        for professor in professores:
+
+            print(f"\n  Matrícula: {negrito}{professor['Numero de Matricula']}{reset}")
+            print(f"  Nome: {verde}{professor['nome']}{reset}")
+            print(f"  Idade: {verde}{professor['idade']} anos{reset}")
+            print(f"  Curso: {verde}{professor['curso']}{reset}")
+            print("-" * 40)
+
 
     # ==========================
     # SAIR
     # ==========================
 
-    elif opcao == "11":
+    elif opcao == "12":
 
         print(f"{verde}\nSistema encerrado. 0brigado!{reset}")
         break
@@ -628,7 +850,8 @@ while True:
     # ==========================
 
     else:
-
+    
         print("\nOpção inválida.")
         print()
         imprimir("-" * 40)
+
